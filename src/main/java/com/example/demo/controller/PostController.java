@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,7 +77,7 @@ public class PostController {
         } else {
             postDto.setMemberEmail(principal.getName());
             postService.save(postDto);
-            model.addAttribute("url", "/post/manage");
+            model.addAttribute("url", "/manage/post");
             model.addAttribute("message", "포스트를 추가했습니다.");
             return "message";
         }
@@ -128,7 +130,7 @@ public class PostController {
             return "redirect:/post/edit/" + postDto.getId();
         } else {
             postService.save(postDto);
-            model.addAttribute("url", "/post/manage");
+            model.addAttribute("url", "/manage/post");
             model.addAttribute("message", "포스트를 수정했습니다.");
             return "message";
         }
@@ -140,7 +142,7 @@ public class PostController {
     public String delete(Principal principal, Model model, @PathVariable(name = "id") Long id) {
         if (postService.hasPermission(id, principal.getName())) {
             postService.deleteById(id);
-            model.addAttribute("url", "/post/manage");
+            model.addAttribute("url", "/manage/post");
             model.addAttribute("message", "포스트를 삭제했습니다.");
         }
         return "message";
@@ -151,7 +153,7 @@ public class PostController {
     public String addComment(HttpServletRequest httpServletRequest, Principal principal, Model model, @Valid PostCommentDto postCommentDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("url", httpServletRequest.getHeader("Referer"));
-            model.addAttribute("message", bindingResult.getFieldError("comment").getDefaultMessage());
+            model.addAttribute("message", bindingResult.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toList()));
         } else {
             postCommentDto.setMemberEmail(principal.getName());
             postCommentDto.setTimeStamp(new Date());
