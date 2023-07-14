@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout.html}">
+<th:block layout:fragment="content">
+    <div class="card mb-4">
+        <div class="row g-0">
+            <div class="col-2">
+                <div class="position-relative" style="padding-bottom: 100%;">
+                    <img class="position-absolute rounded-start" style="width: 100%; height: 100%; object-fit: cover; object-position: top;" th:src="@{/files/{image}(image=${postViewDto.image})}">
+                </div>
+            </div>
+            <div class="col-10">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${postViewDto.title}"></h5>
+                    <p class="card-text" th:text="${postViewDto.company}"></p>
+                    <p class="card-text">
+                        <small class="text-secondary me-2">
+                            <i class="bi bi-eye"></i>
+                            <th:block th:text="${postViewDto.viewCount}"></th:block>
+                        </small>
+                        <small class="text-secondary me-2">
+                            <i class="bi bi-pen"></i>
+                            <th:block th:text="${postViewDto.teamCount}"></th:block>
+                        </small>
+                        <small class="text-secondary">
+                            <i class="bi bi-reply"></i>
+                            <th:block th:text="${postViewDto.commentCount}"></th:block>
+                        </small>
+                    </p>
+                    <th:block th:each="postTeamDto : ${postTeamDtos}">
+                        <img width="32px" th:src="@{/webjars/bootstrap-icons/icons/person-circle.svg}" data-bs-toggle="tooltip" data-bs-placement="bottom" th:data-bs-title="${postTeamDto.name}">
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <table class="table table-sm table-borderless caption-top mb-3">
+                <caption>개요</caption>
+                <tr>
+                    <td class="col-2">분야</td>
+                    <td class="col-10">
+                        <th:block th:each="categoryName : ${postViewDto.categoryNames}">
+                            <span class="badge text-bg-primary" th:text="${categoryName}"></span>
+                        </th:block>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-2">접수 기간</td>
+                    <td class="col-10" th:text="${postViewDto.startDate + ' ~ ' + postViewDto.endDate}"></td>
+                </tr>
+            </table>
+            <table class="table table-sm table-borderless caption-top mb-3">
+                <caption>기관 정보</caption>
+                <tr>
+                    <td class="col-2">주최 기관 구분</td>
+                    <td class="col-10">
+                        <span class="badge text-bg-primary" th:text="${postViewDto.companyTypeName}"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-2">주관 기관</td>
+                    <td class="col-10" th:text="${postViewDto.company2}"></td>
+                </tr>
+                <tr>
+                    <td class="col-2">후원/협찬 기관</td>
+                    <td class="col-10" th:text="${postViewDto.company3}"></td>
+                </tr>
+            </table>
+            <table class="table table-sm table-borderless caption-top">
+                <caption>시상 정보</caption>
+                <tr>
+                    <td class="col-2">1등 시상금</td>
+                    <td class="col-10" th:text="${postViewDto.prizeTop + ' 만원'}"></td>
+                </tr>
+                <tr>
+                    <td class="col-2">총 시상금 규모</td>
+                    <td class="col-10">
+                        <span class="badge text-bg-primary" th:text="${postViewDto.prizeTotalName}"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-2">특전</td>
+                    <td class="col-10">
+                        <th:block th:each="prizeBenefitName : ${postViewDto.prizeBenefitNames}">
+                            <span class="badge text-bg-primary" th:text="${prizeBenefitName}"></span>
+                        </th:block>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <img class="card-img" th:src="@{/files/{image}(image=${postViewDto.image})}">
+    </div>
+    <div class="card mb-4">
+        <div class="card-body" th:text="${postViewDto.description}"></div>
+    </div>
+    <div class="d-flex mb-4">
+        <a class="btn btn-outline-primary me-2" th:href="${postViewDto.website}">
+            <i class="bi bi-globe"></i>
+            웹사이트
+        </a>
+        <form method="post" th:action="@{/post/team}">
+            <input type="hidden" name="postId" th:value="${postViewDto.id}">
+            <button class="btn btn-outline-primary me-2" type="submit">
+                <i class="bi bi-pen"></i>
+                접수
+            </button>
+        </form>
+    </div>
+    <div class="mb-4">
+        <div class="accordion" id="postCommentList">
+            <a href="#" data-bs-toggle="collapse" data-bs-target="#newComment">
+                <small>댓글달기</small>
+            </a>
+            <div id="newComment" class="accordion-collapse collapse show mt-3" data-bs-parent="#postCommentList">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <img width="32px" th:src="@{/webjars/bootstrap-icons/icons/person-circle.svg}">
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <form method="post" th:action="@{/post/comment/add}">
+                            <input class="btn-check" name="postId" th:value="${postViewDto.id}">
+                            <div class="input-group">
+                                <textarea class="form-control" style="resize: none;" name="comment"></textarea>
+                                <button class="btn btn-secondary" type="submit">
+                                    <i class="bi bi-reply"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <th:block th:each="postComment : ${postCommentList.content}">
+                <div class="d-flex mt-3" th:classappend="${postComment.id != postComment.commentId} ? ms-5">
+                    <div class="flex-shrink-0">
+                        <img width="32px" th:src="@{/webjars/bootstrap-icons/icons/person-circle.svg}">
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <th:block th:if="${postComment.permission}">
+                            <form method="post" th:action="@{/post/comment/delete/{id}(id=${postComment.id})}">
+                                <small th:text="${postComment.name}"></small>
+                                <small class="text-muted" th:text="${postComment.timeStamp}"></small>
+                                <button class="bg-transparent border-0 p-0 m-0" type="submit"><i class="bi bi-trash text-danger"></i></button>
+                                <p th:text="${postComment.comment}"></p>
+                            </form>
+                        </th:block>
+                        <th:block th:unless="${postComment.permission}">
+                            <small th:text="${postComment.name}"></small>
+                            <small class="text-muted" th:text="${postComment.timeStamp}"></small>
+                            <p th:text="${postComment.comment}"></p>
+                        </th:block>
+                        <th:block th:if="${postComment.id == postComment.commentId}">
+                            <a href="#" data-bs-toggle="collapse" th:data-bs-target="|#comment-${postComment.id}|">
+                                <small>대댓글달기</small>
+                            </a>
+                            <div th:id="|comment-${postComment.id}|" class="accordion-collapse collapse mt-3" data-bs-parent="#postCommentList">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <img width="32px" th:src="@{/webjars/bootstrap-icons/icons/person-circle.svg}">
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <form method="post" th:action="@{/post/comment/add}">
+                                            <input class="btn-check" name="postId" th:value="${postViewDto.id}">
+                                            <input class="btn-check" name="commentId" th:value="${postComment.commentId}">
+                                            <div class="input-group">
+                                                <textarea class="form-control" style="resize: none;" name="comment"></textarea>
+                                                <button class="btn btn-secondary" type="submit">
+                                                    <i class="bi bi-reply"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+    <div class="mb-4">
+        <form id="postCommentPagination" th:action="@{/post/view/{id}(id=${postViewDto.id})}">
+            <ul th:unless="${postCommentList.totalElements == 0}" class="pagination justify-content-center" th:with="from=${postCommentListDto.page % postCommentListDto.blockSize == 0 ? (postCommentListDto.page / postCommentListDto.blockSize - 1) * postCommentListDto.blockSize + 1 : (postCommentListDto.page / postCommentListDto.blockSize) * postCommentListDto.blockSize + 1}, to=${postCommentListDto.page % postCommentListDto.blockSize == 0 ? postCommentListDto.page : (postCommentListDto.page / postCommentListDto.blockSize + 1) * postCommentListDto.blockSize}">
+                <li class="page-item">
+                    <input class="btn-check" type="radio" name="page" th:value="${from - 1}" th:disabled="${from - 1 == 0}">
+                    <label class="page-link" th:classappend="${from - 1 == 0} ? disabled" role="button">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </label>
+                </li>
+                <th:block th:each="pageNumber : ${#numbers.sequence(from, to >= postCommentList.totalPages ? postCommentList.totalPages : to)}">
+                    <li class="page-item">
+                        <input th:id="${'page-' + pageNumber}" class="btn-check" type="radio" name="page" th:value="${pageNumber}" th:checked="${pageNumber == postCommentListDto.page}">
+                        <label th:for="${'page-' + pageNumber}" class="page-link" th:classappend="${pageNumber == postCommentListDto.page} ? active" th:text="${pageNumber}" role="button"></label>
+                    </li>
+                </th:block>
+                <li class="page-item">
+                    <input class="btn-check" type="radio" name="page" th:value="${to + 1}" th:disabled="${to >= postCommentList.totalPages}">
+                    <label class="page-link" th:classappend="${to >= postCommentList.totalPages} ? disabled" role="button">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </label>
+                </li>
+            </ul>
+        </form>
+    </div>
+</th:block>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/post/view.js}"></script>
+</th:block>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout.html}">
+<th:block layout:fragment="content">
+    <form method="post" th:action="@{/post/edit/{id}(id=${postDto.id})}" enctype="multipart/form-data">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">개요</h5>
+                <div class="mb-3">
+                    <label for="title" class="form-label">제목</label>
+                    <input id="title" class="form-control" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('title') ? 'is-invalid' : 'is-valid'}" type="text" name="title" th:value="${postDto.title}">
+                    <th:block th:if="${bindingResult.hasFieldErrors('title')}" th:each="fieldError : ${bindingResult.getFieldErrors('title')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+                <div class="mb-3">
+                    <label for="website" class="form-label">웹사이트</label>
+                    <input id="website" class="form-control" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('website') ? 'is-invalid' : 'is-valid'}" type="url" name="website" th:value="${postDto.website}">
+                    <th:block th:if="${bindingResult.hasFieldErrors('website')}" th:each="fieldError : ${bindingResult.getFieldErrors('website')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">분야</label>
+                    <div class="card" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('categoryIds') ? 'is-invalid' : 'is-valid'}">
+                        <div class="card-body">
+                            <div class="row">
+                                <th:block th:each="categoryEntity : ${categoryEntities}">
+                                    <div class="col-3">
+                                        <div class="form-check">
+                                            <input th:id="|categoryIds-${categoryEntity.id}|" class="form-check-input" th:classappend="${postDto.validated} ? ${#sets.contains(postDto.categoryIds, categoryEntity.id) ? 'is-valid' : null}" type="checkbox" name="categoryIds" th:value="${categoryEntity.id}" th:checked="${#sets.contains(postDto.categoryIds, categoryEntity.id)}">
+                                            <label th:for="|categoryIds-${categoryEntity.id}|" class="form-check-label" th:text="${categoryEntity.name}"></label>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                    <th:block th:if="${bindingResult.hasFieldErrors('categoryIds')}" th:each="fieldError : ${bindingResult.getFieldErrors('categoryIds')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">접수 기간</label>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <input id="startDate" class="form-control" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('startDate') ? 'is-invalid' : 'is-valid'}" type="date" name="startDate" th:value="${postDto.startDate}">
+                                    <th:block th:if="${bindingResult.hasFieldErrors('startDate')}" th:each="fieldError : ${bindingResult.getFieldErrors('startDate')}">
+                                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                                    </th:block>
+                                </div>
+                                <label for="startDate" class="col-auto col-form-label">부터</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <input id="endDate" class="form-control" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('endDate') ? 'is-invalid' : 'is-valid'}" type="date" name="endDate" th:value="${postDto.endDate}">
+                                    <th:block th:if="${bindingResult.hasFieldErrors('endDate')}" th:each="fieldError : ${bindingResult.getFieldErrors('endDate')}">
+                                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                                    </th:block>
+                                </div>
+                                <label for="endDate" class="col-auto col-form-label">까지</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">기관 정보</h5>
+                <div class="mb-3">
+                    <label for="company" class="form-label">주최 기관</label>
+                    <input id="company" class="form-control" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('company') ? 'is-invalid' : 'is-valid'}" type="text" name="company" th:value="${postDto.company}">
+                    <th:block th:if="${bindingResult.hasFieldErrors('company')}" th:each="fieldError : ${bindingResult.getFieldErrors('company')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">기관 구분</label>
+                    <div class="card" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('companyTypeId') ? 'is-invalid' : 'is-valid'}">
+                        <div class="card-body">
+                            <div class="row">
+                                <th:block th:each="companyTypeEntity : ${companyTypeEntities}">
+                                    <div class="col-3">
+                                        <div class="form-check">
+                                            <input th:id="|companyTypeId-${companyTypeEntity.id}|" class="form-check-input" th:classappend="${postDto.validated} ? ${postDto.companyTypeId == companyTypeEntity.id ? 'is-valid' : null}" type="radio" name="companyTypeId" th:value="${companyTypeEntity.id}" th:checked="${postDto.companyTypeId == companyTypeEntity.id}">
+                                            <label th:for="|companyTypeId-${companyTypeEntity.id}|" class="form-check-label" th:text="${companyTypeEntity.name}"></label>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                    <th:block th:if="${bindingResult.hasFieldErrors('companyTypeId')}" th:each="fieldError : ${bindingResult.getFieldErrors('companyTypeId')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+                <div class="mb-3">
+                    <label for="company2" class="form-label">주관 기관</label>
+                    <input id="company2" class="form-control" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('company2') ? 'is-invalid' : 'is-valid'}" type="text" name="company2" th:value="${postDto.company2}">
+                    <th:block th:if="${bindingResult.hasFieldErrors('company2')}" th:each="fieldError : ${bindingResult.getFieldErrors('company2')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+                <div class="mb-3">
+                    <label for="company3" class="form-label">후원/협찬 기관</label>
+                    <input id="company3" class="form-control" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('company3') ? 'is-invalid' : 'is-valid'}" type="text" name="company3" th:value="${postDto.company3}">
+                    <th:block th:if="${bindingResult.hasFieldErrors('company3')}" th:each="fieldError : ${bindingResult.getFieldErrors('company3')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">시상 정보</h5>
+                <div class="mb-3">
+                    <label for="prizeTop" class="form-label">1등 시상금</label>
+                    <input id="prizeTop" class="form-control" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('prizeTop') ? 'is-invalid' : 'is-valid'}" type="text" name="prizeTop" th:value="${postDto.prizeTop}">
+                    <th:block th:if="${bindingResult.hasFieldErrors('prizeTop')}" th:each="fieldError : ${bindingResult.getFieldErrors('prizeTop')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">총 시상금 규모</label>
+                    <div class="card" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('prizeTotalId') ? 'is-invalid' : 'is-valid'}">
+                        <div class="card-body">
+                            <div class="row">
+                                <th:block th:each="prizeTotalEntity : ${prizeTotalEntities}">
+                                    <div class="col-3">
+                                        <div class="form-check">
+                                            <input th:id="|prizeTotalId-${prizeTotalEntity.id}|" class="form-check-input" th:classappend="${postDto.validated} ? ${postDto.prizeTotalId == prizeTotalEntity.id ? 'is-valid' : null}" type="radio" name="prizeTotalId" th:value="${prizeTotalEntity.id}" th:checked="${postDto.prizeTotalId == prizeTotalEntity.id}">
+                                            <label th:for="|prizeTotalId-${prizeTotalEntity.id}|" class="form-check-label" th:text="${prizeTotalEntity.name}"></label>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                    <th:block th:if="${bindingResult.hasFieldErrors('prizeTotalId')}" th:each="fieldError : ${bindingResult.getFieldErrors('prizeTotalId')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">특전</label>
+                    <div class="card" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('prizeBenefitIds') ? 'is-invalid' : 'is-valid'}">
+                        <div class="card-body">
+                            <div class="row">
+                                <th:block th:each="prizeBenefitEntity : ${prizeBenefitEntities}">
+                                    <div class="col-3">
+                                        <div class="form-check">
+                                            <input th:id="|prizeBenefitIds-${prizeBenefitEntity.id}|" class="form-check-input" th:classappend="${postDto.validated} ? ${#sets.contains(postDto.prizeBenefitIds, prizeBenefitEntity.id) ? 'is-valid' : null}" type="checkbox" name="prizeBenefitIds" th:value="${prizeBenefitEntity.id}" th:checked="${#sets.contains(postDto.prizeBenefitIds, prizeBenefitEntity.id)}">
+                                            <label th:for="|prizeBenefitIds-${prizeBenefitEntity.id}|" class="form-check-label" th:text="${prizeBenefitEntity.name}"></label>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                    <th:block th:if="${bindingResult.hasFieldErrors('prizeBenefitIds')}" th:each="fieldError : ${bindingResult.getFieldErrors('prizeBenefitIds')}">
+                        <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">상세 내용</h5>
+                <textarea id="description" class="form-control" th:classappend="${postDto.validated} ? ${bindingResult.hasFieldErrors('description') ? 'is-invalid' : 'is-valid'}" style="resize: none;" rows="10" name="description" th:text="${postDto.description}"></textarea>
+                <th:block th:if="${bindingResult.hasFieldErrors('description')}" th:each="fieldError : ${bindingResult.getFieldErrors('description')}">
+                    <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                </th:block>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">이미지</h5>
+                <img class="w-100 mb-3" th:src="@{/files/{filename}(filename=${postDto.image})}">
+                <input type="hidden" name="image" th:value="${postDto.image}">
+                <input id="file" class="form-control" type="file" name="file">
+            </div>
+        </div>
+        <div class="d-grid mb-4">
+            <button class="btn btn-outline-primary btn-lg" type="submit">수정</button>
+        </div>
+    </form>
+    <form method="post" th:action="@{/post/delete/{id}(id=${postDto.id})}">
+        <div class="d-grid mb-4">
+            <button class="btn btn-primary btn-lg" type="submit">삭제</button>
+        </div>
+    </form>
+</th:block>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout.html}">
+<th:block layout:fragment="content">
+    <form method="post" th:action="@{/member/add}">
+        <div class="modal d-block z-n1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center text-bg-primary">
+                        <h5 class="modal-title">가입</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">이메일</label>
+                            <input id="email" class="form-control" th:classappend="${memberDto.validated} ? ${bindingResult.hasFieldErrors('email') ? 'is-invalid' : 'is-valid'}" type="email" name="email" th:value="${memberDto.email}">
+                            <th:block th:if="${bindingResult.hasFieldErrors('email')}" th:each="fieldError : ${bindingResult.getFieldErrors('email')}">
+                                <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                            </th:block>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">비밀번호</label>
+                            <input id="email" class="form-control" th:classappend="${memberDto.validated} ? ${bindingResult.hasFieldErrors('password') ? 'is-invalid' : 'is-valid'}" type="password" name="password" th:value="${memberDto.password}">
+                            <th:block th:if="${bindingResult.hasFieldErrors('password')}" th:each="fieldError : ${bindingResult.getFieldErrors('password')}">
+                                <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                            </th:block>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">이름</label>
+                            <input id="email" class="form-control" th:classappend="${memberDto.validated} ? ${bindingResult.hasFieldErrors('name') ? 'is-invalid' : 'is-valid'}" type="text" name="name" th:value="${memberDto.name}">
+                            <th:block th:if="${bindingResult.hasFieldErrors('name')}" th:each="fieldError : ${bindingResult.getFieldErrors('name')}">
+                                <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                            </th:block>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">연락처</label>
+                            <input id="email" class="form-control" th:classappend="${memberDto.validated} ? ${bindingResult.hasFieldErrors('phone') ? 'is-invalid' : 'is-valid'}" type="tel" name="phone" th:value="${memberDto.phone}">
+                            <th:block th:if="${bindingResult.hasFieldErrors('phone')}" th:each="fieldError : ${bindingResult.getFieldErrors('phone')}">
+                                <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                            </th:block>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">소속 회사</label>
+                            <input id="email" class="form-control" th:classappend="${memberDto.validated} ? ${bindingResult.hasFieldErrors('company') ? 'is-invalid' : 'is-valid'}" type="text" name="company" th:value="${memberDto.company}">
+                            <th:block th:if="${bindingResult.hasFieldErrors('company')}" th:each="fieldError : ${bindingResult.getFieldErrors('company')}">
+                                <div class="invalid-feedback" th:text="${fieldError.defaultMessage}"></div>
+                            </th:block>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="d-grid w-100">
+                            <button class="btn btn-primary btn-lg" type="submit">가입</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</th:block>
+</html>

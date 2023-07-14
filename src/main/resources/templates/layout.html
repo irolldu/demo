@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}">
+    <th:block layout:fragment="css"></th:block>
+</head>
+<body>
+    <header class="mb-5">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" th:href="@{/}">Demo</a>
+                <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" th:classappend="${#ctx.springRequestContext.requestUri == '/post/list'} ? active" th:href="@{/post/list}">검색</a>
+                        </li>
+                        <li sec:authorize="hasAuthority('USER')" class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" th:classappend="${#strings.startsWith(#ctx.springRequestContext.requestUri, '/manage')} ? active" data-bs-toggle="dropdown" href="#" role="button">관리</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" th:classappend="${#ctx.springRequestContext.requestUri == '/manage/post'} ? active" th:href="@{/manage/post}">포스트</a></li>
+                                <li><a class="dropdown-item" th:classappend="${#ctx.springRequestContext.requestUri == '/manage/team'} ? active" th:href="@{/manage/team}">접수</a></li>
+                                <li><a class="dropdown-item" th:classappend="${#ctx.springRequestContext.requestUri == '/manage/comment'} ? active" th:href="@{/manage/comment}">댓글</a></li>
+                            </ul>
+                        </li>
+                        <li sec:authorize="hasAuthority('USER')" class="nav-item">
+                            <a class="nav-link" th:classappend="${#ctx.springRequestContext.requestUri == '/post/add'} ? active" th:href="@{/post/add}">추가</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex">
+                        <a sec:authorize="!isAuthenticated()" class="btn btn-outline-light me-2" th:href="@{/login}">로그인</a>
+                        <a sec:authorize="!isAuthenticated()" class="btn btn-light" th:href="@{/member/add}">가입</a>
+                        <a sec:authorize="isAuthenticated()" class="btn btn-outline-light me-2" th:href="@{/logout}">로그아웃</a>
+                        <a sec:authorize="isAuthenticated()" class="btn btn-light" th:href="@{/member/edit}">수정/탈퇴</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <section class="mb-5">
+        <div class="container">
+            <th:block layout:fragment="content"></th:block>
+        </div>
+    </section>
+    <script th:src="@{/webjars/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+    <th:block layout:fragment="script"></th:block>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout.html}">
+<th:block layout:fragment="content">
+    <form id="postCommentList" th:action="@{/manage/comment}">
+        <div class="mb-4" th:text="|검색결과 ${postCommentList.totalElements}건|"></div>
+        <div th:if="${postCommentList.totalElements == 0}" class="col-12">검색 결과가 없습니다.</div>
+        <th:block th:each="postComment : ${postCommentList.content}">
+            <div class="d-flex" th:classappend="${postComment.id != postComment.commentId} ? ms-5">
+                <div class="flex-shrink-0">
+                    <img width="32px" th:src="@{/webjars/bootstrap-icons/icons/person-circle.svg}">
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <a class="text-decoration-none mb-3" th:href="@{/post/view/{postId}(postId=${postComment.postId})}">
+                        <small class="text-dark" th:text="${postComment.name}"></small>
+                        <small class="text-muted" th:text="${postComment.timeStamp}"></small>
+                        <p class="text-dark" th:text="${postComment.comment}"></p>
+                    </a>
+                </div>
+            </div>
+        </th:block>
+        <ul th:unless="${postCommentList.totalElements == 0}" class="pagination justify-content-center" th:with="from=${postCommentListDto.page % postCommentListDto.blockSize == 0 ? (postCommentListDto.page / postCommentListDto.blockSize - 1) * postCommentListDto.blockSize + 1 : (postCommentListDto.page / postCommentListDto.blockSize) * postCommentListDto.blockSize + 1}, to=${postCommentListDto.page % postCommentListDto.blockSize == 0 ? postCommentListDto.page : (postCommentListDto.page / postCommentListDto.blockSize + 1) * postCommentListDto.blockSize}">
+            <li class="page-item">
+                <input id="block-prev" class="btn-check" type="radio" name="page" th:value="${from - 1}" th:disabled="${from - 1 == 0}">
+                <label for="block-prev" class="page-link" th:classappend="${from - 1 == 0} ? disabled" role="button">
+                    <i class="bi bi-chevron-double-left"></i>
+                </label>
+            </li>
+            <th:block th:each="pageNumber : ${#numbers.sequence(from, to >= postCommentList.totalPages ? postCommentList.totalPages : to)}">
+                <li class="page-item">
+                    <input th:id="|page-${pageNumber}|" class="btn-check" type="radio" name="page" th:value="${pageNumber}" th:checked="${pageNumber == postCommentListDto.page}">
+                    <label th:for="|page-${pageNumber}|" class="page-link" th:classappend="${pageNumber == postCommentListDto.page} ? active" th:text="${pageNumber}" role="button"></label>
+                </li>
+            </th:block>
+            <li class="page-item">
+                <input id="block-next" class="btn-check" type="radio" name="page" th:value="${to + 1}" th:disabled="${to >= postCommentList.totalPages}">
+                <label for="block-next" class="page-link" th:classappend="${to >= postCommentList.totalPages} ? disabled" role="button">
+                    <i class="bi bi-chevron-double-right"></i>
+                </label>
+            </li>
+        </ul>
+    </form>
+</th:block>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/manage/comment.js}"></script>
+</th:block>
+</html>

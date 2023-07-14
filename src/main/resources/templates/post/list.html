@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout.html}">
+<th:block layout:fragment="content">
+    <form id="postList" th:action="@{/post/list}">
+        <div class="row justify-content-center mb-4">
+            <div class="col-6">
+                <div class="input-group">
+                    <input class="form-control" type="search" name="keyword" th:value="${postListDto.keyword}">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="nav nav-underline mb-4">
+            <li class="nav-item">
+                <input id="categoryIds-tab" class="btn-check" type="radio" name="tabId" value="1" th:checked="${postListDto.tabId == 1}">
+                <label for="categoryIds-tab" class="nav-link" th:classappend="${postListDto.tabId == 1} ? active" role="button">분야</label>
+            </li>
+            <li class="nav-item">
+                <input id="companyTypeIds-tab" class="btn-check" type="radio" name="tabId" value="2" th:checked="${postListDto.tabId == 2}">
+                <label for="companyTypeIds-tab" class="nav-link" th:classappend="${postListDto.tabId == 2} ? active" role="button">기관 구분</label>
+            </li>
+            <li class="nav-item">
+                <input id="prizeTotalIds-tab" class="btn-check" type="radio" name="tabId" value="3" th:checked="${postListDto.tabId == 3}">
+                <label for="prizeTotalIds-tab" class="nav-link" th:classappend="${postListDto.tabId == 3} ? active" role="button">총 시상금 규모</label>
+            </li>
+            <li class="nav-item">
+                <input id="prizeBenefitIds-tab" class="btn-check" type="radio" name="tabId" value="4" th:checked="${postListDto.tabId == 4}">
+                <label for="prizeBenefitIds-tab" class="nav-link" th:classappend="${postListDto.tabId == 4} ? active" role="button">특전</label>
+            </li>
+        </div>
+        <div class="tab-content mb-4">
+            <div class="tab-pane" th:classappend="${postListDto.tabId == 1} ? active" id="categoryIds">
+                <th:block th:each="categoryEntity : ${categoryEntities}">
+                    <input th:id="|category-${categoryEntity.id}|" class="btn-check" type="checkbox" name="categoryIds" th:value="${categoryEntity.id}" th:checked="${#sets.contains(postListDto.categoryIds, categoryEntity.id)}">
+                    <label th:for="|category-${categoryEntity.id}|" class="btn btn-outline-primary btn-sm rounded-pill" th:classappend="${#sets.contains(postListDto.categoryIds, categoryEntity.id)} ? active" th:text="${categoryEntity.name}"> </label>
+                </th:block>
+            </div>
+            <div class="tab-pane" th:classappend="${postListDto.tabId == 2} ? active" id="companyTypeIds">
+                <th:block th:each="companyTypeEntity : ${companyTypeEntities}">
+                    <input th:id="|companyType-${companyTypeEntity.id}|" class="btn-check" type="checkbox" name="companyTypeIds" th:value="${companyTypeEntity.id}" th:checked="${#sets.contains(postListDto.companyTypeIds, companyTypeEntity.id)}">
+                    <label th:for="|companyType-${companyTypeEntity.id}|" class="btn btn-outline-primary btn-sm rounded-pill" th:classappend="${#sets.contains(postListDto.companyTypeIds, companyTypeEntity.id)} ? active" th:text="${companyTypeEntity.name}"></label>
+                </th:block>
+            </div>
+            <div class="tab-pane" th:classappend="${postListDto.tabId == 3} ? active" id="prizeTotalIds">
+                <th:block th:each="prizeTotalEntity : ${prizeTotalEntities}">
+                    <input th:id="|prizeTotal-${prizeTotalEntity.id}|" class="btn-check" type="checkbox" name="prizeTotalIds" th:value="${prizeTotalEntity.id}" th:checked="${#sets.contains(postListDto.prizeTotalIds, prizeTotalEntity.id)}">
+                    <label th:for="|prizeTotal-${prizeTotalEntity.id}|" class="btn btn-outline-primary btn-sm rounded-pill" th:classappend="${#sets.contains(postListDto.prizeTotalIds, prizeTotalEntity.id)} ? active" th:text="${prizeTotalEntity.name}"></label>
+                </th:block>
+            </div>
+            <div class="tab-pane" th:classappend="${postListDto.tabId == 4} ? active" id="prizeBenefitIds">
+                <th:block th:each="prizeBenefitEntity : ${prizeBenefitEntities}">
+                    <input th:id="|prizeBenefit-${prizeBenefitEntity.id}|" class="btn-check" type="checkbox" name="prizeBenefitIds" th:value="${prizeBenefitEntity.id}" th:checked="${#sets.contains(postListDto.prizeBenefitIds, prizeBenefitEntity.id)}">
+                    <label th:for="|prizeBenefit-${prizeBenefitEntity.id}|" class="btn btn-outline-primary btn-sm rounded-pill" th:classappend="${#sets.contains(postListDto.prizeBenefitIds, prizeBenefitEntity.id)} ? active" th:text="${prizeBenefitEntity.name}"></label>
+                </th:block>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap gap-1 mb-4">
+            <th:block th:each="categoryEntity : ${categoryEntities}">
+                <label th:if="${#sets.contains(postListDto.categoryIds, categoryEntity.id)}" th:for="|category-${categoryEntity.id}|" class="btn btn-primary btn-sm rounded-pill">
+                    <th:block th:text="${categoryEntity.name}"></th:block>
+                    <i class="bi bi-x"></i>
+                </label>
+            </th:block>
+            <th:block th:each="companyTypeEntity : ${companyTypeEntities}">
+                <label th:if="${#sets.contains(postListDto.companyTypeIds, companyTypeEntity.id)}" th:for="|companyType-${companyTypeEntity.id}|" class="btn btn-primary btn-sm rounded-pill">
+                    <th:block th:text="${companyTypeEntity.name}"></th:block>
+                    <i class="bi bi-x"></i>
+                </label>
+            </th:block>
+            <th:block th:each="prizeTotalEntity : ${prizeTotalEntities}">
+                <label th:if="${#sets.contains(postListDto.prizeTotalIds, prizeTotalEntity.id)}" th:for="|prizeTotal-${prizeTotalEntity.id}|" class="btn btn-primary btn-sm rounded-pill">
+                    <th:block th:text="${prizeTotalEntity.name}"></th:block>
+                    <i class="bi bi-x"></i>
+                </label>
+            </th:block>
+            <th:block th:each="prizeBenefitEntity : ${prizeBenefitEntities}">
+                <label th:if="${#sets.contains(postListDto.prizeBenefitIds, prizeBenefitEntity.id)}" th:for="|prizeBenefit-${prizeBenefitEntity.id}|" class="btn btn-primary btn-sm rounded-pill">
+                    <th:block th:text="${prizeBenefitEntity.name}"></th:block>
+                    <i class="bi bi-x"></i>
+                </label>
+            </th:block>
+        </div>
+        <div class="d-flex justify-content-between mb-4">
+            <span class="col-form-label" th:text="|검색결과 ${postList.totalElements}건|"></span>
+            <select class="form-select w-auto" name="sortId" role="button">
+                <option value="1" th:selected="${postListDto.sortId == 1}">최신순</option>
+                <option value="2" th:selected="${postListDto.sortId == 2}">마감순</option>
+                <option value="3" th:selected="${postListDto.sortId == 3}">조회순</option>
+                <option value="4" th:selected="${postListDto.sortId == 4}">팀원순</option>
+                <option value="5" th:selected="${postListDto.sortId == 5}">댓글순</option>
+            </select>
+        </div>
+        <div class="row mb-4">
+            <div th:if="${postList.totalElements == 0}" class="col-12">검색 결과가 없습니다.</div>
+            <th:block th:unless="${postList.totalElements == 0}" th:each="post : ${postList.content}">
+                <a class="col-3 text-decoration-none mb-3" th:href="@{/post/view/{id}(id=${post.id})}">
+                    <div class="card">
+                        <div class="position-relative" style="padding-bottom: 100%;">
+                            <img class="position-absolute rounded-top" style="width: 100%; height: 100%; object-fit: cover; object-position: top;" th:src="@{/files/{image}(image=${post.image})}">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${post.title}"></h5>
+                            <p class="card-text" th:text="${post.company}"></p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-secondary me-2">
+                                <i class="bi bi-eye"></i>
+                                <th:block th:text="${post.viewCount}"></th:block>
+                            </small>
+                            <small class="text-secondary me-2">
+                                <i class="bi bi-pen"></i>
+                                <th:block th:text="${post.teamCount}"></th:block>
+                            </small>
+                            <small class="text-secondary">
+                                <i class="bi bi-reply"></i>
+                                <th:block th:text="${post.commentCount}"></th:block>
+                            </small>
+                        </div>
+                    </div>
+                </a>
+            </th:block>
+        </div>
+        <div class="mb-4">
+            <ul th:unless="${postList.totalElements == 0}" class="pagination justify-content-center" th:with="from=${postListDto.page % postListDto.blockSize == 0 ? (postListDto.page / postListDto.blockSize - 1) * postListDto.blockSize + 1 : (postListDto.page / postListDto.blockSize) * postListDto.blockSize + 1}, to=${postListDto.page % postListDto.blockSize == 0 ? postListDto.page : (postListDto.page / postListDto.blockSize + 1) * postListDto.blockSize}">
+                <li class="page-item">
+                    <input id="block-prev" class="btn-check" type="radio" name="page" th:value="${from - 1}" th:disabled="${from - 1 == 0}">
+                    <label for="block-prev" class="page-link" th:classappend="${from - 1 == 0} ? disabled" role="button">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </label>
+                </li>
+                <th:block th:each="pageNumber : ${#numbers.sequence(from, to >= postList.totalPages ? postList.totalPages : to)}">
+                    <li class="page-item">
+                        <input th:id="|page-${pageNumber}|" class="btn-check" type="radio" name="page" th:value="${pageNumber}" th:checked="${pageNumber == postListDto.page}">
+                        <label th:for="|page-${pageNumber}|" class="page-link" th:classappend="${pageNumber == postListDto.page} ? active" th:text="${pageNumber}" role="button"></label>
+                    </li>
+                </th:block>
+                <li class="page-item">
+                    <input id="block-next" class="btn-check" type="radio" name="page" th:value="${to + 1}" th:disabled="${to >= postList.totalPages}">
+                    <label for="block-next" class="page-link" th:classappend="${to >= postList.totalPages} ? disabled" role="button">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </form>
+</th:block>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/post/list.js}"></script>
+</th:block>
+</html>

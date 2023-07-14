@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout.html}">
+<th:block layout:fragment="content">
+    <form id="postList" th:action="@{/manage/team}">
+        <div class="mb-4" th:text="|검색결과 ${postList.totalElements}건|"></div>
+        <div class="row mb-4">
+            <div th:if="${postList.totalElements == 0}" class="col-12">검색 결과가 없습니다.</div>
+            <th:block th:unless="${postList.totalElements == 0}" th:each="post : ${postList.content}">
+                <a class="col-3 text-decoration-none mb-3" th:href="@{/post/view/{id}(id=${post.id})}">
+                    <div class="card">
+                        <div class="position-relative" style="padding-bottom: 100%;">
+                            <img class="position-absolute rounded-top" style="width: 100%; height: 100%; object-fit: cover; object-position: top;" th:src="@{/files/{image}(image=${post.image})}">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${post.title}"></h5>
+                            <p class="card-text" th:text="${post.company}"></p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-secondary me-2">
+                                <i class="bi bi-eye"></i>
+                                <th:block th:text="${post.viewCount}"></th:block>
+                            </small>
+                            <small class="text-secondary me-2">
+                                <i class="bi bi-pen"></i>
+                                <th:block th:text="${post.teamCount}"></th:block>
+                            </small>
+                            <small class="text-secondary">
+                                <i class="bi bi-reply"></i>
+                                <th:block th:text="${post.commentCount}"></th:block>
+                            </small>
+                        </div>
+                    </div>
+                </a>
+            </th:block>
+        </div>
+        <div class="mb-4">
+            <ul th:unless="${postList.totalElements == 0}" class="pagination justify-content-center" th:with="from=${postListDto.page % postListDto.blockSize == 0 ? (postListDto.page / postListDto.blockSize - 1) * postListDto.blockSize + 1 : (postListDto.page / postListDto.blockSize) * postListDto.blockSize + 1}, to=${postListDto.page % postListDto.blockSize == 0 ? postListDto.page : (postListDto.page / postListDto.blockSize + 1) * postListDto.blockSize}">
+                <li class="page-item">
+                    <input id="block-prev" class="btn-check" type="radio" name="page" th:value="${from - 1}" th:disabled="${from - 1 == 0}">
+                    <label for="block-prev" class="page-link" th:classappend="${from - 1 == 0} ? disabled" role="button">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </label>
+                </li>
+                <th:block th:each="pageNumber : ${#numbers.sequence(from, to >= postList.totalPages ? postList.totalPages : to)}">
+                    <li class="page-item">
+                        <input th:id="|page-${pageNumber}|" class="btn-check" type="radio" name="page" th:value="${pageNumber}" th:checked="${pageNumber == postListDto.page}">
+                        <label th:for="|page-${pageNumber}|" class="page-link" th:classappend="${pageNumber == postListDto.page} ? active" th:text="${pageNumber}" role="button"></label>
+                    </li>
+                </th:block>
+                <li class="page-item">
+                    <input id="block-next" class="btn-check" type="radio" name="page" th:value="${to + 1}" th:disabled="${to >= postList.totalPages}">
+                    <label for="block-next" class="page-link" th:classappend="${to >= postList.totalPages} ? disabled" role="button">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </form>
+</th:block>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/manage/team.js}"></script>
+</th:block>
+</html>
