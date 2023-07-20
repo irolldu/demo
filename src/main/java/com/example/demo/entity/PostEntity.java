@@ -36,7 +36,7 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (MEMBERID) REFERENCES MEMBER ON DELETE SET NULL"))
+    @JoinColumn(name = "memberId", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (MEMBERID) REFERENCES MEMBER (ID) ON DELETE SET NULL"))
     private MemberEntity memberEntity;
     @Column(nullable = false)
     private String title;

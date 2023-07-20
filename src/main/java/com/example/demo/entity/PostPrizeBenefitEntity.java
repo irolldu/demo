@@ -27,7 +27,7 @@ public class PostPrizeBenefitEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "postId", nullable = false, foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (POSTID) REFERENCES POST ON DELETE CASCADE"))
+    @JoinColumn(name = "postId", nullable = false, foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (POSTID) REFERENCES POST (ID) ON DELETE CASCADE"))
     private PostEntity postEntity;
     @Column(nullable = false)
     private Long prizeBenefitId;

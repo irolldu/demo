@@ -22,10 +22,10 @@ public class PostTeamEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (MEMBERID) REFERENCES MEMBER ON DELETE SET NULL"))
+    @JoinColumn(name = "memberId", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (MEMBERID) REFERENCES MEMBER (ID) ON DELETE SET NULL"))
     private MemberEntity memberEntity;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (POSTID) REFERENCES POST ON DELETE CASCADE"))
+    @JoinColumn(name = "postId", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (POSTID) REFERENCES POST (ID) ON DELETE CASCADE"))
     private PostEntity postEntity;
 
 }
